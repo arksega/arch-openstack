@@ -1,3 +1,6 @@
+# Update system
+pacman -Suy --noconfirm
+
 # Include access tokens
 . access_tokens
 
