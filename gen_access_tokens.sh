@@ -2,26 +2,28 @@ which pwgen > /dev/null 2>&1
 if [[ $? -ne 0 ]]; then
 	pacman -S pwgen --noconfirm
 fi
+pwgen='pwgen 32 1'
 cat > access_tokens << EOF
-ADMIN_PASS=$(pwgen 12 1)
-CEILOMETER_DBPASS=$(pwgen 12 1)
-CEILOMETER_PASS=$(pwgen 12 1)
-CINDER_DBPASS=$(pwgen 12 1)
-CINDER_PASS=$(pwgen 12 1)
-DASH_DBPASS=$(pwgen 12 1)
-DEMO_PASS=$(pwgen 12 1)
-GLANCE_DBPASS=$(pwgen 12 1)
-GLANCE_PASS=$(pwgen 12 1)
-HEAT_DBPASS=$(pwgen 12 1)
-HEAT_DOMAIN_PASS=$(pwgen 12 1)
-HEAT_PASS=$(pwgen 12 1)
-KEYSTONE_DBPASS=$(pwgen 12 1)
-NEUTRON_DBPASS=$(pwgen 12 1)
-NEUTRON_PASS=$(pwgen 12 1)
-NOVA_DBPASS=$(pwgen 12 1)
-NOVA_PASS=$(pwgen 12 1)
-RABBIT_PASS=$(pwgen 12 1)
-SWIFT_PASS=$(pwgen 12 1)
+ADMIN_PASS=$($pwgen)
+CEILOMETER_DBPASS=$($pwgen)
+CEILOMETER_PASS=$($pwgen)
+CINDER_DBPASS=$($pwgen)
+CINDER_PASS=$($pwgen)
+DASH_DBPASS=$($pwgen)
+DEMO_PASS=$($pwgen)
+GLANCE_DBPASS=$($pwgen)
+GLANCE_PASS=$($pwgen)
+HEAT_DBPASS=$($pwgen)
+HEAT_DOMAIN_PASS=$($pwgen)
+HEAT_PASS=$($pwgen)
+KEYSTONE_DBPASS=$($pwgen)
+NEUTRON_DBPASS=$($pwgen)
+NEUTRON_PASS=$($pwgen)
+NOVA_DBPASS=$($pwgen)
+NOVA_PASS=$($pwgen)
+RABBIT_PASS=$($pwgen)
+SWIFT_PASS=$($pwgen)
+MARIADB_PASS=$($pwgen)
 EOF
 
 chmod 400 access_tokens
