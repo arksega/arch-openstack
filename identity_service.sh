@@ -46,3 +46,66 @@ sed -i "/^#LoadModule rewrite_module.*/a LoadModule wsgi_module modules/mod_wsgi
 sed -i 's/apache2/httpd/g' /etc/httpd/conf/extra/wsgi-keystone.conf
 systemctl enable httpd.service
 systemctl start httpd.service
+
+# Create services, and endpoints
+# ===============
+# At this point all should by up and running
+
+OS_TKEN=$(cat )
+OS_URL=http://$HOSTNAME:35357/v3
+OS_IDENTITY_API_VERSION=3
+
+echo 'Create service entity'
+openstack service create \
+	  --name keystone --description "OpenStack Identity" identity
+
+echo 'Create public identity endpoint'
+openstack endpoint create --region RegionOne \
+	   identity public http://controller:5000/v3
+
+echo 'Create internal identity endpoint'
+openstack endpoint create --region RegionOne \
+	   identity internal http://controller:5000/v3
+
+echo 'Create admin identity endpoint'
+openstack endpoint create --region RegionOne \
+	   identity admin http://controller:5000/v3
+
+# Create domain, projects, users and roles
+
+echo 'Create default domain'
+openstack domain create --description "Default Domain" default
+
+echo 'Create admin project'
+openstack project create --domain default --description "Admin Project" admin
+
+echo 'Create admin user'
+openstack user create --domain default --password $ADMIN_PASS admin
+
+echo 'Create admin role'
+openstack role create admin
+
+echo 'Link admin role to admin user and project'
+openstack role add --project admin --user admin admin
+
+echo 'Create service project'
+openstack project create --domain default --description "Service Project" service
+
+echo 'Create demo project'
+openstack project create --domain default --description "Demo Project" demo
+
+echo 'Create demo user'
+openstack user create --domain default --password $DEMO_PASS demo
+
+echo 'Create user role'
+openstack role create user
+
+echo 'Link user role to demo user and project'
+openstack role add --project demo --user demo user
+
+echo '============================='
+echo 'Test request...'
+unset OS_TOKEN OS_URL
+OS_PASSWORD=$ADMIN_PASS openstack --os-auth-url http://$HOSTNAME:35357/v3 \
+	  --os-project-domain-name default --os-user-domain-name default \
+	    --os-project-name admin --os-username admin token issue
