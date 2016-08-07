@@ -50,3 +50,7 @@ rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 pacman -S memcached --noconfirm
 systemctl enable memcached.service
 systemctl start memcached.service
+
+# Openstack client
+pacman -S python-pip --noconfirm
+pip install  python-openstackclient
