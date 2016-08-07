@@ -51,9 +51,9 @@ systemctl start httpd.service
 # ===============
 # At this point all should by up and running
 
-OS_TKEN=$(cat )
-OS_URL=http://$HOSTNAME:35357/v3
-OS_IDENTITY_API_VERSION=3
+export OS_TOKEN=$(cat keystone_admin_token)
+export OS_URL=http://$HOSTNAME:35357/v3
+export OS_IDENTITY_API_VERSION=3
 
 echo 'Create service entity'
 openstack service create \
