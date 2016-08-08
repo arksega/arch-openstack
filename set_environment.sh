@@ -50,6 +50,7 @@ rabbitmqctl add_user openstack $RABBIT_PASS
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
 # memcached
+pip install python-memcached
 pacman -S memcached --noconfirm
 systemctl enable memcached.service
 systemctl start memcached.service
