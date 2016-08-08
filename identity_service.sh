@@ -61,15 +61,15 @@ openstack service create \
 
 echo 'Create public identity endpoint'
 openstack endpoint create --region RegionOne \
-	   identity public http://controller:5000/v3
+	   identity public http://$HOSTNAME:5000/v3
 
 echo 'Create internal identity endpoint'
 openstack endpoint create --region RegionOne \
-	   identity internal http://controller:5000/v3
+	   identity internal http://$HOSTNAME:5000/v3
 
 echo 'Create admin identity endpoint'
 openstack endpoint create --region RegionOne \
-	   identity admin http://controller:5000/v3
+	   identity admin http://$HOSTNAME:5000/v3
 
 # Create domain, projects, users and roles
 
