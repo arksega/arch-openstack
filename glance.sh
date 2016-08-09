@@ -21,7 +21,7 @@ openstack role add --project service --user glance admin
 git clone git://github.com/openstack/glance
 cd glance
 pip install .
-useradd -r -s /usr/bin/nologin keystone -m
+useradd -r -s /usr/bin/nologin glance -m
 
 # Populate /etc
 mkdir /etc/glance
