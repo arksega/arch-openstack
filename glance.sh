@@ -57,6 +57,11 @@ sed -i "/^\[paste_deploy\]/a flavor = keystone" /etc/glance/glance-registry.conf
 
 su -s /bin/sh -c "glance-manage db_sync" glance
 
+# Start glance
+su -s /bin/bash -c "glance-api &" glance
+su -s /bin/bash -c "glance-registry &" glance
+
+# Crete service and endpoints
 echo 'Create glance service'
 openstack service create --name glance --description "OpenStack Image" image
 
