@@ -21,7 +21,8 @@ openstack role add --project service --user glance admin
 git clone git://github.com/openstack/glance
 cd glance
 pip install .
-useradd -r -s /usr/bin/nologin glance -m
+useradd -r -s /usr/bin/nologin glance -m -d /var/lib/glance
+mkdir /var/lib/glance/images
 
 # Populate /etc
 mkdir /etc/glance
@@ -42,6 +43,9 @@ sed -i "/^\[keystone_authtoken\]/a memcached_servers = $HOSTNAME:11211" /etc/gla
 sed -i "/^\[keystone_authtoken\]/a auth_url = http://$HOSTNAME:35357" /etc/glance/glance-api.conf
 sed -i "/^\[keystone_authtoken\]/a auth_url = http://$HOSTNAME:5000" /etc/glance/glance-api.conf
 sed -i "/^\[paste_deploy\]/a flavor = keystone" /etc/glance/glance-api.conf
+sed -i "/^\[glance_store\]/a filesystem_store_datadir = /var/lib/glance/images/" /etc/glance/glance-api.conf
+sed -i "/^\[glance_store\]/a default_store = file" /etc/glance/glance-api.conf
+sed -i "/^\[glance_store\]/a stores = file,http" /etc/glance/glance-api.conf
 
 sed -i "/^\[database\]/a connection = mysql+pymysql://glance:$GLANCE_DBPASS@$HOSTNAME/glance" /etc/glance/glance-registry.conf
 sed -i "/^\[keystone_authtoken\]/a password = $GLANCE_PASS" /etc/glance/glance-registry.conf
