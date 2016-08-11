@@ -23,6 +23,7 @@ cd glance
 pip install .
 useradd -r -s /usr/bin/nologin glance -m -d /var/lib/glance
 mkdir /var/lib/glance/images
+chown glance:glance /var/lib/glance/images
 
 # Populate /etc
 mkdir /etc/glance
