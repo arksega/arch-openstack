@@ -1,5 +1,6 @@
 # Update system
 pacman -Suy --noconfirm
+pacman -S python-pip --noconfirm
 
 # Include access tokens
 . access_tokens
@@ -56,5 +57,4 @@ systemctl enable memcached.service
 systemctl start memcached.service
 
 # Openstack client
-pacman -S python-pip --noconfirm
 pip install  python-openstackclient
