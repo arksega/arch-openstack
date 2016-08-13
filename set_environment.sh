@@ -1,6 +1,6 @@
 # Update system
 pacman -Suy --noconfirm
-pacman -S python-pip --noconfirm
+pacman -S python-pip gcc --noconfirm
 
 # Include access tokens
 . access_tokens
