@@ -8,19 +8,14 @@ root_path=$(pwd)
 mysql -u root -p$MARIADB_PASS << EOF
 CREATE DATABASE nova_api;
 CREATE DATABASE nova;
-GRANT ALL PRIVILEGES ON nova_api.* TO 'nova_api'@'localhost' IDENTIFIED BY '$NOVA_DBPASS';
-GRANT ALL PRIVILEGES ON nova_api.* TO 'nova_api'@'%' IDENTIFIED BY '$NOVA_DBPASS';
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY '$NOVA_DBPASS';
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY '$NOVA_DBPASS';
 GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '$NOVA_DBPASS';
 GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$NOVA_DBPASS';
 EOF
 
-echo 'Create nova user'
-openstack user create --domain default --password $NOVA_PASS nova
-
-echo 'Adding admin role to nova'
-openstack role add --project service --user nova admin
-
 # Install nova from source
+pacman -S libxslt, sudo
 git clone git://github.com/openstack/nova
 cd nova
 pip install .
@@ -31,7 +26,7 @@ mkdir /var/lib/nova/images
 oslo-config-generator --config-file etc/nova/nova-config-generator.conf
 mkdir /etc/nova
 cd etc/nova
-cp api-paste.ini /etc/nova
+cp -r rootwrap.d rootwrap.conf api-paste.ini /etc/nova
 cp nova.conf.sample /etc/nova/nova.conf
 cd $root_path
 
@@ -41,6 +36,8 @@ sed -i "/^\[DEFAULT\]/a enabled_api = osapi_compute,metadata" /etc/nova/nova.con
 sed -i "/^\[DEFAULT\]/a my_api = 192.168.100.169" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a use_neutron = True" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a firewall_driver = nova.virt.firewall.NoopFirewallDriver" /etc/nova/nova.conf
+sed -i "/^\[database\]/a \[api_database\]" /etc/nova/nova.conf
+sed -i "/^\[api_database\]/a  " /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a connection = mysql+pymysql://nova:$NOVA_DBPASS@$HOSTNAME/nova_api" /etc/nova/nova.conf
 sed -i "/^\[database\]/a connection = mysql+pymysql://nova:$NOVA_DBPASS@$HOSTNAME/nova" /etc/nova/nova.conf
 sed -i "/^\[vnc\]/a vncserver_listen = $my_ip" /etc/nova/nova.conf
@@ -69,22 +66,29 @@ sed -i "/^\[keystone_authtoken\]/a auth_url = http://$HOSTNAME:35357" /etc/nova/
 sed -i "/^\[keystone_authtoken\]/a auth_url = http://$HOSTNAME:5000" /etc/nova/nova.conf
 
 
-su -s /bin/sh -c "glance-manage db_sync" glance
+su -s /bin/sh -c "nova-manage api_db sync" nova
+su -s /bin/sh -c "nova-manage db sync" nova
 
-# Start glance
-cp glance-*.service /usr/lib/systemd/system/
-systemctl enable glance-api.service glance-registry.service
-systemctl start glance-api.service glance-registry.service
+echo 'Create nova user'
+openstack user create --domain default --password $NOVA_PASS nova
 
-# Crete service and endpoints
-echo 'Create glance service'
-openstack service create --name glance --description "OpenStack Image" image
+echo 'Adding admin role to nova'
+openstack role add --project service --user nova admin
 
-echo 'Create public endpoint'
-openstack endpoint create --region RegionOne image public http://$HOSTNAME:9292
+echo 'Create compute servie'
+openstack service create --name nova \
+	  --description "OpenStack Compute" compute
 
-echo 'Create internal endpoint'
-openstack endpoint create --region RegionOne image internal http://$HOSTNAME:9292
+echo 'Adding public endpoint'
+openstack endpoint create --region RegionOne \
+	  compute public http://$HOSTNAME:8774/v2.1/%\(tenant_id\)s
 
-echo 'Create admin endpoint'
-openstack endpoint create --region RegionOne image admin http://$HOSTNAME:9292
+echo 'Adding internal endpoint'
+openstack endpoint create --region RegionOne \
+	  compute internal http://$HOSTNAME:8774/v2.1/%\(tenant_id\)s
+
+echo 'Adding admin endpoint'
+openstack endpoint create --region RegionOne \
+	  compute admin http://$HOSTNAME:8774/v2.1/%\(tenant_id\)s
+
+
