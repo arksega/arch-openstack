@@ -18,7 +18,7 @@ openssl rand -hex 10 > keystone_admin_token
 git clone https://git.openstack.org/openstack/keystone.git
 pacman -S apache --noconfirm
 cd keystone;
-pip install . pymysql
+pip2 install . pymysql
 useradd -r -s /usr/bin/nologin keystone -m
 
 # Populate /etc

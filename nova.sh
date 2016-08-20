@@ -18,7 +18,7 @@ EOF
 pacman -S libxslt, sudo
 git clone git://github.com/openstack/nova
 cd nova
-pip install .
+pip2 install .
 useradd -r -s /usr/bin/nologin nova -m -d /var/lib/nova
 mkdir /var/lib/nova/images
 
@@ -37,7 +37,10 @@ sed -i "/^\[DEFAULT\]/a my_api = 192.168.100.169" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a use_neutron = True" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a firewall_driver = nova.virt.firewall.NoopFirewallDriver" /etc/nova/nova.conf
 sed -i "/^\[database\]/a \[api_database\]" /etc/nova/nova.conf
+sed -i "/^\[api_database\]/a \[glance\]" /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a  " /etc/nova/nova.conf
+sed -i "/^\[glance\]/a  " /etc/nova/nova.conf
+sed -i "/^\[glance\]/a api_servers = http://$HOSTNAME:9292" /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a connection = mysql+pymysql://nova:$NOVA_DBPASS@$HOSTNAME/nova_api" /etc/nova/nova.conf
 sed -i "/^\[database\]/a connection = mysql+pymysql://nova:$NOVA_DBPASS@$HOSTNAME/nova" /etc/nova/nova.conf
 sed -i "/^\[vnc\]/a vncserver_listen = $my_ip" /etc/nova/nova.conf
