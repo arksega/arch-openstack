@@ -51,8 +51,8 @@ sed -i "/^\[oslo_concurrency\]/a lock_path = /var/lib/nova/tmp" /etc/nova/nova.c
 
 # Configure sudoers
 
-cat 'nova ALL = (root) NOPASSWD: /usr/bin/nova-rootwrap /etc/nova/rootwrap.conf *' >> /etc/sudoers
-cat 'Defaults requiretty' >> /etc/sudoers
+echo 'nova ALL = (root) NOPASSWD: /usr/bin/nova-rootwrap /etc/nova/rootwrap.conf *' >> /etc/sudoers
+echo 'Defaults requiretty' >> /etc/sudoers
 
 # Add rabbitmq
 
