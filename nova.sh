@@ -21,6 +21,7 @@ cd nova
 pip2 install .
 useradd -r -s /usr/bin/nologin nova -m -d /var/lib/nova
 mkdir /var/lib/nova/images
+mkdir /usr/lib/python2.7/site-packages/keys
 
 # Populate /etc
 oslo-config-generator --config-file etc/nova/nova-config-generator.conf
