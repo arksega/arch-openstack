@@ -15,7 +15,7 @@ GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$NOVA_DBPASS';
 EOF
 
 # Install nova from source
-pacman -S libxslt, sudo
+pacman -S sudo
 git clone git://github.com/openstack/nova
 cd nova
 pip2 install .
@@ -33,7 +33,7 @@ cd $root_path
 # Configure nova
 
 sed -i "/^\[DEFAULT\]/a enabled_api = osapi_compute,metadata" /etc/nova/nova.conf
-sed -i "/^\[DEFAULT\]/a my_api = 192.168.100.169" /etc/nova/nova.conf
+sed -i "/^\[DEFAULT\]/a my_api = 192.168.100.129" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a use_neutron = True" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a firewall_driver = nova.virt.firewall.NoopFirewallDriver" /etc/nova/nova.conf
 sed -i "/^\[database\]/a \[api_database\]" /etc/nova/nova.conf
@@ -47,6 +47,11 @@ sed -i "/^\[vnc\]/a vncserver_listen = $my_ip" /etc/nova/nova.conf
 sed -i "/^\[vnc\]/a vncserver_proxyclient_address = $my_ip" /etc/nova/nova.conf
 sed -i "/^\[glance\]/a api_servers = http://$HOSTNAME:9292" /etc/nova/nova.conf
 sed -i "/^\[oslo_concurrency\]/a lock_path = /var/lib/nova/tmp" /etc/nova/nova.conf
+
+# Configure sudoers
+
+cat 'nova ALL = (root) NOPASSWD: /usr/bin/nova-rootwrap /etc/nova/rootwrap.conf *' >> /etc/sudoers
+cat 'Defaults requiretty' >> /etc/sudoers
 
 # Add rabbitmq
 
