@@ -15,7 +15,7 @@ GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$NOVA_DBPASS';
 EOF
 
 # Install nova from source
-pacman -S sudo
+pacman -S sudo --noconfirm
 git clone git://github.com/openstack/nova
 cd nova
 pip2 install .
