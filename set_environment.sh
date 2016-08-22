@@ -1,6 +1,6 @@
 # Update system
 pacman -Suy --noconfirm
-pacman -S python-pip gcc --noconfirm
+pacman -S python2-pip gcc --noconfirm
 
 # Include access tokens
 . access_tokens
@@ -51,10 +51,10 @@ rabbitmqctl add_user openstack $RABBIT_PASS
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
 # memcached
-pip install python-memcached
+pip2 install python-memcached
 pacman -S memcached --noconfirm
 systemctl enable memcached.service
 systemctl start memcached.service
 
 # Openstack client
-pip install  python-openstackclient
+pip2 install  python-openstackclient

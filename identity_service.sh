@@ -18,7 +18,7 @@ openssl rand -hex 10 > keystone_admin_token
 git clone https://git.openstack.org/openstack/keystone.git
 pacman -S apache --noconfirm
 cd keystone;
-pip install . pymysql
+pip2 install . pymysql
 useradd -r -s /usr/bin/nologin keystone -m
 
 # Populate /etc
@@ -38,7 +38,7 @@ su -s /bin/sh -c "keystone-manage db_sync" keystone
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
 
 # Install apache
-pacman -S apache mod_wsgi --noconfirm
+pacman -S apache mod_wsgi2 --noconfirm
 sed -i "s/#ServerName.*/ServerName $HOSTNAME/" /etc/httpd/conf/httpd.conf
 cp wsgi-keystone.conf /etc/httpd/conf/extra/wsgi-keystone.conf
 sed -i "/^#Include conf\/extra\/httpd-ssl.conf.*/a Include conf\/extra\/wsgi-keystone.conf" /etc/httpd/conf/httpd.conf
