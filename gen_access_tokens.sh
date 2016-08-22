@@ -17,13 +17,14 @@ HEAT_DBPASS=$($pwgen)
 HEAT_DOMAIN_PASS=$($pwgen)
 HEAT_PASS=$($pwgen)
 KEYSTONE_DBPASS=$($pwgen)
+MARIADB_PASS=$($pwgen)
+METADATA_SECRET=$($pwgen)
 NEUTRON_DBPASS=$($pwgen)
 NEUTRON_PASS=$($pwgen)
 NOVA_DBPASS=$($pwgen)
 NOVA_PASS=$($pwgen)
 RABBIT_PASS=$($pwgen)
 SWIFT_PASS=$($pwgen)
-MARIADB_PASS=$($pwgen)
 EOF
 
 chmod 400 access_tokens
