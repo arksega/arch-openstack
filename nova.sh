@@ -20,7 +20,7 @@ pacman -S sudo libvirt-python dnsmasq ebtables dmidecode qemu --noconfirm
 git clone git://github.com/openstack/nova
 cd nova
 pip2 install .
-useradd -r -s /usr/bin/nologin nova -m -d /var/lib/nova -G nova,libvirt
+useradd -r -s /usr/bin/nologin nova -m -d /var/lib/nova -G libvirt
 mkdir /var/lib/nova/images
 
 # Populate /etc
@@ -38,6 +38,7 @@ sed -i "/^\[DEFAULT\]/a my_api = 192.168.100.129" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a use_neutron = True" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a firewall_driver = nova.virt.firewall.NoopFirewallDriver" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a state_path = /var/lib/nova" /etc/nova/nova.conf
+sed -i "/^\[DEFAULT\]/a compute_driver = libvirt.LibvirtDriver" /etc/nova/nova.conf
 sed -i "/^\[database\]/a \[api_database\]" /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a \[glance\]" /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a  " /etc/nova/nova.conf
@@ -100,6 +101,9 @@ echo 'Adding admin endpoint'
 openstack endpoint create --region RegionOne \
 	  compute admin http://$HOSTNAME:8774/v2.1/%\(tenant_id\)s
 
+# Starting services
+systemctl enable libvirtd
+systemctl start libvirtd
 cp nova*service /usr/lib/systemd/system/
 systemctl enable nova*service
 systemctl start nova*service
