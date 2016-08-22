@@ -25,6 +25,7 @@ mkdir /etc/neutron
 cd etc
 cp -r policy.json rootwrap.conf api-paste.ini neutron/rootwrap.d neutron/plugins  /etc/neutron
 cp neutron.conf.sample /etc/neutron/neutron.conf
+cd $root_path
 
 # Configure nova
 
@@ -149,7 +150,7 @@ openstack endpoint create --region RegionOne \
 
 echo 'Adding admin endpoint'
 openstack endpoint create --region RegionOne \
-	  network endpoint http://$HOSTNAME:9696
+	  network admin http://$HOSTNAME:9696
 
 # Starting services
 systemctl restart nova-api.service

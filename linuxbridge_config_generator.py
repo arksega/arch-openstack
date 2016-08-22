@@ -17,7 +17,7 @@ lba.set('vxlan', '12_population', True)
 
 lba.add_section('securitygroup')
 lba.set('securitygroup', 'enable_security_group', True)
-lba.set('securitygroup', 'firewall_driver', 'neutron.agent.linux.iptables_firewall.IptablesFirewallD')
+lba.set('securitygroup', 'firewall_driver', 'neutron.agent.linux.iptables_firewall.IptablesFirewallDriver')
 
 with open('/etc/neutron/plugins/ml2/linuxbridge_agent.ini', 'wb') as configfile:
         lba.write(configfile)
