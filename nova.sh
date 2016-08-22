@@ -15,13 +15,13 @@ GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$NOVA_DBPASS';
 EOF
 
 # Install nova from source
-pacman -S sudo --noconfirm
+pacman -S sudo libvirt-python dnsmasq ebtables dmidecode qemu --noconfirm
+
 git clone git://github.com/openstack/nova
 cd nova
 pip2 install .
-useradd -r -s /usr/bin/nologin nova -m -d /var/lib/nova
+useradd -r -s /usr/bin/nologin nova -m -d /var/lib/nova -G nova,libvirt
 mkdir /var/lib/nova/images
-mkdir /usr/lib/python2.7/site-packages/keys
 
 # Populate /etc
 oslo-config-generator --config-file etc/nova/nova-config-generator.conf
@@ -37,6 +37,7 @@ sed -i "/^\[DEFAULT\]/a enabled_api = osapi_compute,metadata" /etc/nova/nova.con
 sed -i "/^\[DEFAULT\]/a my_api = 192.168.100.129" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a use_neutron = True" /etc/nova/nova.conf
 sed -i "/^\[DEFAULT\]/a firewall_driver = nova.virt.firewall.NoopFirewallDriver" /etc/nova/nova.conf
+sed -i "/^\[DEFAULT\]/a state_path = /var/lib/nova" /etc/nova/nova.conf
 sed -i "/^\[database\]/a \[api_database\]" /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a \[glance\]" /etc/nova/nova.conf
 sed -i "/^\[api_database\]/a  " /etc/nova/nova.conf
@@ -52,7 +53,6 @@ sed -i "/^\[oslo_concurrency\]/a lock_path = /var/lib/nova/tmp" /etc/nova/nova.c
 # Configure sudoers
 
 echo 'nova ALL = (root) NOPASSWD: /usr/bin/nova-rootwrap /etc/nova/rootwrap.conf *' >> /etc/sudoers
-echo 'Defaults requiretty' >> /etc/sudoers
 
 # Add rabbitmq
 
@@ -100,4 +100,7 @@ echo 'Adding admin endpoint'
 openstack endpoint create --region RegionOne \
 	  compute admin http://$HOSTNAME:8774/v2.1/%\(tenant_id\)s
 
+cp nova*service /usr/lib/systemd/system/
+systemctl enable nova*service
+systemctl start nova*service
 
