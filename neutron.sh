@@ -107,13 +107,14 @@ EOF
 
 cat > /etc/neutron/metadata_agent.ini << EOF
 [DEFAULT]
-nova_metadata_ip = controller
+nova_metadata_ip = $HOSTNAME
 metadata_proxy_shared_secret = $METADATA_SECRET
 EOF
 
 cat >> /etc/nova/nova.conf << EOF
-url = http://controller:9696
-auth_url = http://controller:35357
+[neutron]
+url = http://$HOSTNAME:9696
+auth_url = http://$HOSTNAME:35357
 auth_type = password
 project_domain_name = default
 user_domain_name = default
