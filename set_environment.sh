@@ -57,4 +57,4 @@ systemctl enable memcached.service
 systemctl start memcached.service
 
 # Openstack client
-pip2 install  python-openstackclient
+pip2 install  python-openstackclient -c mitaka-constrains.txt
