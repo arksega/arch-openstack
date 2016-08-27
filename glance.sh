@@ -20,7 +20,8 @@ openstack role add --project service --user glance admin
 # Install glance from source
 git clone git://github.com/openstack/glance
 cd glance
-pip2 install .
+git checkout stable/mitaka
+pip2 install . -c ../mitaka-constrains.txt
 useradd -r -s /usr/bin/nologin glance -m -d /var/lib/glance
 mkdir /var/lib/glance/images
 chown glance:glance /var/lib/glance/images
